@@ -1,0 +1,1 @@
+# elasticsearch-vs-mysql-playground
