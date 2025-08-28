@@ -1,0 +1,42 @@
+Refactor lidt i kode i forhold til hjælper metoder og at gøre det nemt og intuitivt at fx execute DB quries.
+
+Lav her efter nogle eksempler hvor man bruger explain til at undersøger hvordan DB'en fatisk kører en query.
+Gør det fks med multi index og mulige andre faldgrupper
+
+
+Lav søgning på multi index med begger keys = forventet bruger index
+Lav søgning på multi index med kun første key = forventet at den bruger indexet 
+Lav søgning på multi index med kun anden key = forventet full table scan.
+
+Lav søgning på multi index på første key og anden ikke indekseret kolumnne = forventet bruger index?
+
+Byt så rundt på key order og se om det gør en forskel
+
+
+Sørg for at sæt noget eksempel op hvor man også vil kunne se hvilken performance der er at hente hvis man indeksere korrekt og stil forskellige scenarier op med forskellige løsninger
+
+Jeg ved ikke om sql explain også vil få trin mæssigt med hvad DB'en gør
+
+Der er også noget execution plan som man måske og kunne undersøge og sætte op til at vise hvad det gør
+
+
+Lav også noget eksempel med scan på Upper(indexnavn) og se hvad der sker i det tilfælde
+
+
+Lav hjælpe metode til at se ting såsom indexes for en DB. 
+
+Lav noget med FBI function based index (det var vist ikke en feature i MySQL)
+
+
+Der er noget med at få noget statics for indexes måske eller noget som den basere sin estaimat i forhold til noget excetion plan til at faktisk gætte rigigt.
+Her kan det vær eat jeg skal lave en hjælpe metode til at opdatere dette.
+
+
+Det er vist vigtigt det med execution plan i forhold til at se hvad SQL regner med at lave. 
+
+
+
+Sørg for at kunne printe Explain på en fin måde
+
+
+Lav noget for at se om der er en forskel mellem at bruge name = "xxx" eller name = ? og så udfylde ? senere. noget med at det sidste burde være hurtigere
