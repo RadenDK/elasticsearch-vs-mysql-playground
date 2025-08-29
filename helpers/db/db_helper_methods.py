@@ -45,7 +45,7 @@ def show_table_indexes(table_name, database):
             
         return df
     
-def drop_non_clustered_indexes(table_name, database):
+def drop_non_clustered_indexes(table_name, database, output=True):
     """
     Drop all non-clustered (non-PRIMARY) indexes from a table.
     No confirmation needed as this is for test data.
@@ -76,21 +76,21 @@ def drop_non_clustered_indexes(table_name, database):
         indexes = [row[0] for row in cursor.fetchall()]
         
         if not indexes:
-            print(f"No non-clustered indexes found in '{table_name}'")
+            if output: print(f"No non-clustered indexes found in '{table_name}'")
             return 0
-        
-        print(f"Found {len(indexes)} non-clustered indexes to drop")
-        
+
+        if output: print(f"Found {len(indexes)} non-clustered indexes to drop")
+
         # Drop each index
         dropped = 0
         for idx in indexes:
             try:
                 drop_query = f"DROP INDEX `{idx}` ON `{table_name}`"
                 cursor.execute(drop_query)
-                print(f"Dropped index '{idx}'")
+                if output: print(f"Dropped index '{idx}'")
                 dropped += 1
             except Exception as e:
-                print(f"Error dropping index '{idx}': {str(e)}")
-        
-        print(f"Successfully dropped {dropped} of {len(indexes)} indexes")
+                if output: print(f"Error dropping index '{idx}': {str(e)}")
+
+        if output: print(f"Successfully dropped {dropped} of {len(indexes)} indexes")
         return dropped
