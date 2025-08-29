@@ -47,17 +47,39 @@ def test_connection(database=None):
         return False, f"Failed to connect to MySQL: {e}"
 
 
-def execute_query(query, params=None, database=None, as_df=False):
-    """Execute a single query and optionally fetch results as DataFrame"""
+import time
+import pandas as pd
+
+def execute_query(query, params=None, database=None, print_as_df=False, show_metrics=False):
+    """Execute a single query and optionally fetch results as DataFrame with timing + cursor metadata"""
+
     with get_connection(database) as cursor:
+        start_time = time.time()
         cursor.execute(query, params or ())
-        if cursor.description:  # means it's a SELECT (or similar returning rows)
+        elapsed = (time.time() - start_time) * 1000  # ms
+
+        rows = None
+        if cursor.description:  # SELECT-like
             rows = cursor.fetchall()
-            if as_df:
+            if print_as_df:
                 columns = [col[0] for col in cursor.description]
-                return pd.DataFrame(rows, columns=columns)
-            return rows
-        return None
+                df = pd.DataFrame(rows, columns=columns)
+                display(df)
+
+
+        if show_metrics:
+            if cursor.description:  # SELECT
+                print(f"[QUERY METRICS] {cursor.rowcount} rows fetched, {elapsed:.2f} ms")
+            else:  # INSERT/UPDATE/DELETE
+                print(f"[QUERY METRICS] {cursor.rowcount} rows affected, {elapsed:.2f} ms")
+                if cursor.lastrowid:
+                    print(f"  Last insert ID: {cursor.lastrowid}")
+
+    if (print_as_df or show_metrics):
+        return
+    
+    return rows
+
 
 
 def execute_many_query(query, params_list, database=None):
@@ -65,3 +87,26 @@ def execute_many_query(query, params_list, database=None):
     with get_connection(database) as (cursor):
         cursor.executemany(query, params_list)
 
+
+
+def clear_mysql_cache(database=None):
+    """Clear MySQL cache and buffers"""
+    if database is None:
+        from helpers.db.db_setup_methods import get_database_name
+        database = get_database_name()
+        
+    try:
+        # Try MySQL 8+ approach
+        execute_query("FLUSH TABLES", database=database)
+        execute_query("FLUSH HOSTS", database=database)
+        execute_query("RESET PERSIST", database=database)
+    except Exception:
+        # Fallback for older MySQL versions
+        try:
+            execute_query("RESET QUERY CACHE", database=database)
+            execute_query("FLUSH QUERY CACHE", database=database)
+        except Exception:
+            # Last resort
+            execute_query("FLUSH TABLES", database=database)
+            
+    print("MySQL cache cleared")
