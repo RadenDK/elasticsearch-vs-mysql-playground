@@ -2,6 +2,8 @@ import pymysql
 from pymysql.err import OperationalError
 from contextlib import contextmanager
 import pymysql
+import pandas as pd
+
 
 from helpers.db.db_setup_methods import *
 
@@ -44,12 +46,19 @@ def test_connection(database=None):
     except OperationalError as e:
         return False, f"Failed to connect to MySQL: {e}"
 
-def execute_query(query, params=None, database=None):
-    """Execute a single query and optionally fetch results"""
-    breakpoint()
-    with get_connection(database) as (cursor):
+
+def execute_query(query, params=None, database=None, as_df=False):
+    """Execute a single query and optionally fetch results as DataFrame"""
+    with get_connection(database) as cursor:
         cursor.execute(query, params or ())
-        return cursor
+        if cursor.description:  # means it's a SELECT (or similar returning rows)
+            rows = cursor.fetchall()
+            if as_df:
+                columns = [col[0] for col in cursor.description]
+                return pd.DataFrame(rows, columns=columns)
+            return rows
+        return None
+
 
 def execute_many_query(query, params_list, database=None):
     """Execute a query multiple times with different parameters"""

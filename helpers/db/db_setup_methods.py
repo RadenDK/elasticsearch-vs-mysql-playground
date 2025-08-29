@@ -10,8 +10,6 @@ port = 3307
 
 
 
-    
-
 def get_table_name():
     return "test_table"
 
@@ -69,7 +67,7 @@ def init_tables():
 
 
 def populate_table(records_max=2000000):
-    csv_file = "products-2000000.csv"
+    csv_file = "../../products-2000000.csv"
 
     # Read only up to records_max rows
     df = pd.read_csv(csv_file, nrows=records_max)
