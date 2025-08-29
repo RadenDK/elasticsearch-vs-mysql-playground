@@ -38,3 +38,7 @@ Sørg for at kunne printe Explain på en fin måde
 
 
 Lav noget for at se om der er en forskel mellem at bruge name = "xxx" eller name = ? og så udfylde ? senere. noget med at det sidste burde være hurtigere
+
+
+Lave DB'en om til at bruge flere tables for et mere realistisk scenarie
+
