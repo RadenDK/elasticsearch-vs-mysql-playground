@@ -1,5 +1,3 @@
-Refactor lidt i kode i forhold til hjælper metoder og at gøre det nemt og intuitivt at fx execute DB quries.
-
 Lav her efter nogle eksempler hvor man bruger explain til at undersøger hvordan DB'en fatisk kører en query.
 Gør det fks med multi index og mulige andre faldgrupper
 
