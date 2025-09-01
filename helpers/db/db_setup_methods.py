@@ -30,6 +30,12 @@ def init_db(records_max=2000000):
     init_tables()
     populate_tables(records_max)
 
+    execute_query(f"ANALYZE TABLE products;", database=db_name)
+    execute_query(f"ANALYZE TABLE categories;", database=db_name)
+    execute_query(f"ANALYZE TABLE brands;", database=db_name)
+    execute_query(f"ANALYZE TABLE colors;", database=db_name)
+    execute_query(f"ANALYZE TABLE availability;", database=db_name)
+
 
 def init_tables():
     """Initialize normalized tables (products, brands, categories, colors, availability)"""
