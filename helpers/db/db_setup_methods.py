@@ -15,20 +15,21 @@ def get_database_name():
 # ------------------------
 # Schema Setup
 # ------------------------
-def init_db(records_max=2000000):
+def init_db(records_max=2000000, db_name=None):
     """Drop + recreate the database and load data"""
 
     if records_max < 1 or records_max > 20000000:
         raise ValueError("records_max must be between 1 and 2,000,000")
 
-    db_name = get_database_name()
+    if db_name == None:
+        db_name = get_database_name()
 
     execute_query(f"DROP DATABASE IF EXISTS {db_name}")
     execute_query(f"CREATE DATABASE IF NOT EXISTS {db_name}")
     print("Created empty database")
 
-    init_tables()
-    populate_tables(records_max)
+    init_tables(db_name=db_name)
+    populate_tables(records_max=records_max, db_name=db_name)
 
     execute_query(f"ANALYZE TABLE products;", database=db_name)
     execute_query(f"ANALYZE TABLE categories;", database=db_name)
@@ -37,9 +38,11 @@ def init_db(records_max=2000000):
     execute_query(f"ANALYZE TABLE availability;", database=db_name)
 
 
-def init_tables():
+def init_tables(db_name=None):
     """Initialize normalized tables (products, brands, categories, colors, availability)"""
-    db_name = get_database_name()
+    
+    if db_name == None:
+        db_name = get_database_name()
 
     # Drop in reverse dependency order
     for table in ["products", "brands", "categories", "colors", "availability"]:
@@ -106,9 +109,11 @@ def init_tables():
 # ------------------------
 # Data Population
 # ------------------------
-def populate_tables(records_max=2000000):
+def populate_tables(records_max=2000000, db_name=None):
     """Populate tables from CSV into normalized structure"""
-    db_name = get_database_name()
+    if db_name == None:
+        db_name = get_database_name()
+        
     csv_file = "../../products-2000000.csv"
 
     # Read CSV
