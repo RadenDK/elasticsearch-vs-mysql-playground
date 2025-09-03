@@ -45,7 +45,7 @@ def show_table_indexes(table_name, database):
             
         return df
     
-def drop_non_clustered_indexes(table_name, database, output=True):
+def drop_non_clustered_indexes(table_name, database, output=False):
     """
     Drop all non-clustered (non-PRIMARY) indexes from a table.
     No confirmation needed as this is for test data.
